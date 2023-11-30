@@ -1,8 +1,9 @@
 #include <QCoreApplication>
+#include "battleship.h"
 
 int main() {
     const QString filePath = "/home/topik/QtProjects/BattleshipConsole/battle_ship.txt";
-    battleship game(filePath);
+    Battleship game(filePath);
     game.play();
     return 0;
 }
