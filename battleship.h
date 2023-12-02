@@ -21,6 +21,9 @@ private:
     QVector<QString> errors;
     bool checkShipPlacement();
     void printResult(bool isCorrect, const QString& explanation) const;
+    bool checkSurroundingCell(QVector<QVector<Cell>> &shipGrid, QPoint point, int deltaX, int deltaY);
+    void countShips(QVector<QVector<Cell>>& shipGrid);
+    void outputShipCounts() const;
 };
 
 

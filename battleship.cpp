@@ -53,7 +53,7 @@ bool Battleship::checkShipPlacement() {
         return false;
     }
 
-
+    countShips(shipGrid);
 
     // TODO: Calculate counts ships errors
     errors = QVector<QString>(ships.size(), QString(""));
@@ -65,4 +65,75 @@ void Battleship::printResult(bool isCorrect, const QString& explanation) const {
     if (!isCorrect) {
         std::cout << "Incorrect placement: " << explanation.toStdString() << "\n";
     }
+}
+
+void Battleship::countShips(QVector<QVector<Cell>>& shipGrid) {
+    int singleDeckCount = 0;
+    int doubleDeckCount = 0;
+    int tripleDeckCount = 0;
+    int quadrupleDeckCount = 0;
+
+    for (int row = 0; row < shipGrid.size(); ++row) {
+        for (int col = 0; col < shipGrid.at(row).size(); ++col) {
+            if (shipGrid[row][col].check || !shipGrid[row][col].ship) {
+                continue;
+            }
+            shipGrid[row][col].check = true;
+            ships.push_back({QPoint(col, row)});
+            QVector<QPoint>& ship = ships.back();
+            const QPoint& start = ship.front();
+            int delta = 1;
+            while (checkSurroundingCell(shipGrid, start, delta, 0)) {
+                ship.push_back(QPoint(start.x() + delta, start.y()));
+                if (++delta > 3) {
+                    break;
+                }
+            }
+            if (ship.size() > 1) {
+                continue;
+            }
+            delta = 1;
+            while (checkSurroundingCell(shipGrid, start, 0, delta)) {
+                ship.push_back(QPoint(start.x(), start.y() + delta));
+                if (++delta > 3) {
+                    break;
+                }
+            }
+
+            // Count the type of ship
+            int shipSize = ship.size();
+            if (shipSize == 1) {
+                ++singleDeckCount;
+            } else if (shipSize == 2) {
+                ++doubleDeckCount;
+            } else if (shipSize == 3) {
+                ++tripleDeckCount;
+            } else if (shipSize == 4) {
+                ++quadrupleDeckCount;
+            }
+        }
+    }
+
+    if (singleDeckCount != 4 || doubleDeckCount != 3 || tripleDeckCount != 2 || quadrupleDeckCount != 1) {
+        printResult(true, "Incorrect number of ships.");
+    }
+}
+
+
+
+void Battleship::outputShipCounts() const {
+    std::cout << "Ship counts:\n";
+    std::cout << "Single-deck ships: " << std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 1; }) << "\n";
+    std::cout << "Double-deck ships: " << std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 2; }) << "\n";
+    std::cout << "Triple-deck ships: " << std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 3; }) << "\n";
+    std::cout << "Quadruple-deck ships: " << std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 4; }) << "\n";
+}
+
+bool Battleship::checkSurroundingCell(QVector<QVector<Cell> > &shipGrid, QPoint point, int deltaX, int deltaY)
+{
+    if ((point.x() + deltaX >= shipGrid.at(point.y()).size()) || (point.y() + deltaY >= shipGrid.size())) {
+        return false;
+    }
+    shipGrid[point.y() + deltaY][point.x() + deltaX].check = true;
+    return shipGrid.at(point.y() + deltaY).at(point.x() + deltaX).ship;
 }
