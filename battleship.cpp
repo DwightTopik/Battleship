@@ -9,6 +9,7 @@ Battleship::Battleship(const QString& filePath) : filePath(filePath) {}
 void Battleship::play() {
     if (checkShipPlacement()) {
         std::cout << "Ships are correctly placed.\n";
+        outputShipCounts();
     } else {
         std::cout << "Ships are incorrectly placed.\n";
     }
