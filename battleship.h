@@ -24,6 +24,11 @@ private:
     bool checkSurroundingCell(QVector<QVector<Cell>> &shipGrid, QPoint point, int deltaX, int deltaY);
     void countShips(QVector<QVector<Cell>>& shipGrid);
     void outputShipCounts() const;
+    void outputErrors() const;
+    bool checkCorrectPlacement(QVector<QVector<Cell>>& shipGrid);
+    void checkMissingShips();
+    void checkExcessShips();
+    void addError(int shipIndex, const QString& message);
 };
 
 

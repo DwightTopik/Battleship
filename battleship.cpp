@@ -120,8 +120,6 @@ void Battleship::countShips(QVector<QVector<Cell>>& shipGrid) {
     }
 }
 
-
-
 void Battleship::outputShipCounts() const {
     std::cout << "Ship counts:\n";
     std::cout << "Single-deck ships: " << std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 1; }) << "\n";
@@ -137,4 +135,77 @@ bool Battleship::checkSurroundingCell(QVector<QVector<Cell> > &shipGrid, QPoint 
     }
     shipGrid[point.y() + deltaY][point.x() + deltaX].check = true;
     return shipGrid.at(point.y() + deltaY).at(point.x() + deltaX).ship;
+}
+
+bool Battleship::checkCorrectPlacement(QVector<QVector<Cell>>& shipGrid) {
+    for (int i = 0; i < ships.size(); ++i) {
+        const QVector<QPoint>& ship = ships[i];
+        for (const QPoint& point : ship) {
+            // Check if the ship touches another ship
+            if (checkSurroundingCell(shipGrid, point, 1, 0) ||
+                checkSurroundingCell(shipGrid, point, -1, 0) ||
+                checkSurroundingCell(shipGrid, point, 0, 1) ||
+                checkSurroundingCell(shipGrid, point, 0, -1)) {
+                addError(i, "Ships are touching.");
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void Battleship::checkMissingShips() {
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 1; }) < 4) {
+        addError(-1, "Missing single-deck ships.");
+    }
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 2; }) < 3) {
+        addError(-1, "Missing double-deck ships.");
+    }
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 3; }) < 2) {
+        addError(-1, "Missing triple-deck ships.");
+    }
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 4; }) < 1) {
+        addError(-1, "Missing quadruple-deck ship.");
+    }
+}
+
+void Battleship::checkExcessShips() {
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 1; }) > 4) {
+        addError(-1, "Excess single-deck ships.");
+    }
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 2; }) > 3) {
+        addError(-1, "Excess double-deck ships.");
+    }
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 3; }) > 2) {
+        addError(-1, "Excess triple-deck ships.");
+    }
+    if (std::count_if(ships.begin(), ships.end(), [](const QVector<QPoint>& ship) { return ship.size() == 4; }) > 1) {
+        addError(-1, "Excess quadruple-deck ships.");
+    }
+}
+
+void Battleship::addError(int shipIndex, const QString& message) {
+    if (shipIndex != -1) {
+        if (!errors[shipIndex].isEmpty()) {
+            errors[shipIndex] += "\n";
+        }
+        errors[shipIndex] += message;
+    } else {
+        for (int i = 0; i < errors.size(); ++i) {
+            if (errors[i].isEmpty()) {
+                errors[i] = message;
+                break;
+            }
+        }
+    }
+}
+
+void Battleship::outputErrors() const {
+    std::cout << "Errors:\n";
+    for (int i = 0; i < errors.size(); ++i) {
+        if (!errors[i].isEmpty()) {
+            std::cout << "Error in ship " << i + 1 << ": " << errors[i].toStdString() << "\n";
+        }
+    }
 }
