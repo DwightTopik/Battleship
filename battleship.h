@@ -1,6 +1,7 @@
 #ifndef BATTLESHIP_H
 #define BATTLESHIP_H
 #include <QString>
+#include <QStringList>
 #include <QVector>
 #include <QPoint>
 
@@ -17,18 +18,17 @@ public:
 
 private:
     QString filePath;
+    QVector<QVector<Cell>> shipsMap;
     QVector<QVector<QPoint>> ships;
-    QVector<QString> errors;
-    bool checkShipPlacement();
-    void printResult(bool isCorrect, const QString& explanation) const;
-    bool checkSurroundingCell(QVector<QVector<Cell>> &shipGrid, QPoint point, int deltaX, int deltaY);
-    void countShips(QVector<QVector<Cell>>& shipGrid);
-    void outputShipCounts() const;
+    QStringList errors;
+    bool readShipPlacement();
+    void checkSurroundingShips(const QVector<QVector<QPoint>> &ships);
+    void checkSurroundingShips(const QVector<QVector<QPoint>> &ships, int shipIndex, int testIndex);
+    bool checkSurroundingDeck(QVector<QVector<Cell>> &shipMap, QPoint point, int deltaX, int deltaY);
+    void detectShips(QVector<QVector<Cell>>& shipsGrid);
+    int countShips(const QVector<QVector<QPoint>> &ships, int deck) const;
     void outputErrors() const;
-    bool checkCorrectPlacement(QVector<QVector<Cell>>& shipGrid);
-    void checkMissingShips();
-    void checkExcessShips();
-    void addError(int shipIndex, const QString& message);
+    void outputErrors(const QStringList &errors) const;
 };
 
 

@@ -12,9 +12,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bins)
+
 add_executable(BattleshipConsole
   main.cpp
   battleship.h battleship.cpp
+
 )
 target_link_libraries(BattleshipConsole Qt${QT_VERSION_MAJOR}::Core)
 

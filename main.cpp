@@ -1,9 +1,12 @@
 #include <QCoreApplication>
+#include <QDebug>
 #include "battleship.h"
 
-int main() {
-    const QString filePath = "/home/topik/QtProjects/BattleshipConsole/battle_ship.txt";
-    Battleship game(filePath);
+int main(int argc, char **argv) {
+    QString fileName = "battle_ship.txt";
+    QCoreApplication app(argc, argv);
+    auto arguments = app.arguments();
+    Battleship game(QCoreApplication::applicationDirPath() + "/" + fileName);
     game.play();
     return 0;
 }
