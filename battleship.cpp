@@ -41,7 +41,7 @@ void Battleship::play() {
         int localCountShips = countShips(ships, i);
         int needShipsCount = 5 - i;
         if (localCountShips != needShipsCount) {
-            errors.append(QString("%1\'deck ships is %2. %3 ships: %4.").arg(i).arg(localCountShips)
+            errors.append(QString("%1\'deck ships are %2. %3 ships: %4.").arg(i).arg(localCountShips)
                               .arg(localCountShips < needShipsCount ? "Missing" : "Exceeding")
                               .arg(abs(localCountShips - needShipsCount)));
         }
